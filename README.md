@@ -13,6 +13,9 @@
   - [Functions](#54)
   - [Application hosting options](#55)
   - [Virtual networking](#56)
+  - [Virtual private networks](#57)
+  - [Azure ExpressRoute](#58)
+- [Examples](#100)
 
 ### 📒 Cloud computing. Cloud Models <a name="1"></a>
 
@@ -347,6 +350,186 @@ All of these app styles are hosted in the same infrastructure and share these be
 
 ### 📒 Virtual networking <a name="56"></a>
 
----
+Azure virtual networks and virtual subnets enable Azure resources, such as VMs, web apps, and databases, to communicate with each other, with users on the internet, and with your on-premises client computers.
 
-<a href='https://www.digitalocean.com/community/tutorials/how-to-install-lamp-stack-on-ubuntu'>How To Install Linux, Apache, MySQL, PHP (LAMP) Stack on Ubuntu</a>
+Azure virtual networks provide the following key networking capabilities:
+
+- Isolation and segmentation
+- Internet communications
+- Communicate between Azure resources
+- Communicate with on-premises resources
+- Route network traffic
+- Filter network traffic
+- Connect virtual networks
+
+Azure virtual networking supports both public and private endpoints to enable communication between external or internal resources with other internal resources.
+
+- Public endpoints have a public IP address and can be accessed from anywhere in the world.
+- Private endpoints exist within a virtual network and have a private IP address from within the address space of that virtual network.
+
+Azure virtual network allows you to create multiple `isolated virtual networks`. When you set up a virtual network, you define a private IP address space by using either public or private IP address ranges. The IP range only exists within the virtual network and isn't internet routable. You can divide that IP address space into `subnets` and allocate part of the defined address space to each named subnet.
+
+For name resolution, you can use the name resolution service that's built into Azure. You also can configure the virtual network to use either an internal or an external DNS server.
+
+You can enable incoming connections from the internet by assigning a public IP address to an Azure resource, or putting the resource behind a public load balancer.
+
+You'll want to enable Azure resources to communicate securely with each other. You can do that in one of two ways:
+
+- Virtual networks can connect not only VMs but other Azure resources, such as the App Service Environment for Power Apps, Azure Kubernetes Service, and Azure virtual machine scale sets.
+- Service endpoints can connect to other Azure resource types, such as Azure SQL databases and storage accounts. This approach enables you to link multiple Azure resources to virtual networks to improve security and provide optimal routing between resources.
+
+Azure virtual networks enable you to link resources together in your on-premises environment and within your Azure subscription. In effect, you can create a network that spans both your local and cloud environments. There are three mechanisms for you to achieve this connectivity:
+
+- Point-to-site virtual private network connections are from a computer outside your organization back into your corporate network. In this case, the client computer initiates an encrypted VPN connection to connect to the Azure virtual network.
+- Site-to-site virtual private networks link your on-premises VPN device or gateway to the Azure VPN gateway in a virtual network. In effect, the devices in Azure can appear as being on the local network. The connection is encrypted and works over the internet.
+- Azure ExpressRoute provides a dedicated private connectivity to Azure that doesn't travel over the internet. ExpressRoute is useful for environments where you need greater bandwidth and even higher levels of security.
+
+By default, Azure routes traffic between subnets on any connected virtual networks, on-premises networks, and the internet. You also can control routing and override those settings, as follows:
+
+- Route tables allow you to define rules about how traffic should be directed. You can create custom route tables that control how packets are routed between subnets.
+- Border Gateway Protocol (BGP) works with Azure VPN gateways, Azure Route Server, or Azure ExpressRoute to propagate on-premises BGP routes to Azure virtual networks.
+
+Azure virtual networks enable you to filter traffic between subnets by using the following approaches:
+
+- Network security groups are Azure resources that can contain multiple inbound and outbound security rules. You can define these rules to allow or block traffic, based on factors such as source and destination IP address, port, and protocol.
+- Network virtual appliances are specialized VMs that can be compared to a hardened network appliance. A network virtual appliance carries out a particular network function, such as running a firewall or performing wide area network (WAN) optimization.
+
+You can link virtual networks together by using virtual network peering. Peering allows two virtual networks to connect directly to each other. Network traffic between peered networks is private, and travels on the Microsoft backbone network, never entering the public internet. Peering enables resources in each virtual network to communicate with each other. These virtual networks can be in separate regions, which allows you to create a global interconnected network through Azure.
+
+User-defined routes (UDR) allow you to control the routing tables between subnets within a virtual network or between virtual networks. This allows for greater control over network traffic flow.
+
+### 📒 Virtual private networks <a name="57"></a>
+
+A virtual private network (VPN) uses an encrypted tunnel within another network. VPNs are typically deployed to connect two or more trusted private networks to one another over an untrusted network (typically the public internet). Traffic is encrypted while traveling over the untrusted network to prevent eavesdropping or other attacks. VPNs can enable networks to safely and securely share sensitive information.
+
+A `VPN gateway` is a type of virtual network gateway. `Azure VPN Gateway instances` are deployed in a dedicated subnet of the virtual network and enable the following connectivity:
+
+- Connect on-premises datacenters to virtual networks through a site-to-site connection.
+- Connect individual devices to virtual networks through a point-to-site connection.
+- Connect virtual networks to other virtual networks through a network-to-network connection.
+
+All data transfer is encrypted inside a private tunnel as it crosses the internet. You can deploy only one VPN gateway in each virtual network. However, you can use one gateway to connect to multiple locations, which includes other virtual networks or on-premises datacenters.
+
+When setting up a VPN gateway, you must specify the type of VPN - either policy-based or route-based. The primary distinction between these two types is how they determine which traffic needs encryption. In Azure, regardless of the VPN type, the method of authentication employed is a pre-shared key.
+
+- Policy-based VPN gateways specify statically the IP address of packets that should be encrypted through each tunnel. This type of device evaluates every data packet against those sets of IP addresses to choose the tunnel where that packet is going to be sent through.
+- In Route-based gateways, IPSec tunnels are modeled as a network interface or virtual tunnel interface. IP routing (either static routes or dynamic routing protocols) decides which one of these tunnel interfaces to use when sending each packet. Route-based VPNs are the preferred connection method for on-premises devices. They're more resilient to topology changes such as the creation of new subnets.
+
+Use a route-based VPN gateway if you need any of the following types of connectivity:
+
+- Connections between virtual networks
+- Point-to-site connections
+- Multisite connections
+- Coexistence with an Azure ExpressRoute gateway
+
+If you’re configuring a VPN to keep your information safe, you also want to be sure that it’s a highly available and fault tolerant VPN configuration. There are a few ways to maximize the resiliency of your VPN gateway.
+
+- `Active/standby`. By default, VPN gateways are deployed as two instances in an active/standby configuration, even if you only see one VPN gateway resource in Azure. When planned maintenance or unplanned disruption affects the active instance, the standby instance automatically assumes responsibility for connections without any user intervention. Connections are interrupted during this failover, but they're typically restored within a few seconds for planned maintenance and within 90 seconds for unplanned disruptions.
+- `Active/active`
+  With the introduction of support for the BGP routing protocol, you can also deploy VPN gateways in an active/active configuration. In this configuration, you assign a unique public IP address to each instance. You then create separate tunnels from the on-premises device to each IP address. You can extend the high availability by deploying an additional VPN device on-premises.
+- `ExpressRoute failover`. Another high-availability option is to configure a VPN gateway as a secure failover path for ExpressRoute connections. ExpressRoute circuits have resiliency built in. However, they aren't immune to physical problems that affect the cables delivering connectivity or outages that affect the complete ExpressRoute location. In high-availability scenarios, where there's risk associated with an outage of an ExpressRoute circuit, you can also provision a VPN gateway that uses the internet as an alternative method of connectivity. In this way, you can ensure there's always a connection to the virtual networks.
+- `Zone-redundant gateways`. In regions that support availability zones, VPN gateways and ExpressRoute gateways can be deployed in a zone-redundant configuration. This configuration brings resiliency, scalability, and higher availability to virtual network gateways. Deploying gateways in Azure availability zones physically and logically separates gateways within a region while protecting your on-premises network connectivity to Azure from zone-level failures. These gateways require different gateway stock keeping units (SKUs) and use Standard public IP addresses instead of Basic public IP addresses.
+
+### 📒 Azure ExpressRoute <a name="58"></a>
+
+`Azure ExpressRoute` lets you extend your on-premises networks into the Microsoft cloud over a private connection, with the help of a connectivity provider. This connection is called an ExpressRoute Circuit. With ExpressRoute, you can establish connections to Microsoft cloud services, such as Microsoft Azure and Microsoft 365. This allows you to connect offices, datacenters, or other facilities to the Microsoft cloud. Each location would have its own ExpressRoute circuit.
+
+Connectivity can be from an any-to-any (IP VPN) network, a point-to-point Ethernet network, or a virtual cross-connection through a connectivity provider at a colocation facility. ExpressRoute connections don't go over the public Internet. This allows ExpressRoute connections to offer more reliability, faster speeds, consistent latencies, and higher security than typical connections over the Internet.
+
+### 📒 Examples <a name="100"></a>
+
+1. Create a Linux VM:
+
+```
+az vm create \
+  --resource-group "learn-013646d8-6b6d-4f70-bb31-0393cfd8ffa2" \
+  --name my-vm \
+  --public-ip-sku Standard \
+  --image Ubuntu2204 \
+  --admin-username azureuser \
+  --generate-ssh-keys
+```
+
+2. Configure Nginx on the VM:
+
+```
+az vm extension set \
+  --resource-group "learn-013646d8-6b6d-4f70-bb31-0393cfd8ffa2" \
+  --vm-name my-vm \
+  --name customScript \
+  --publisher Microsoft.Azure.Extensions \
+  --version 2.1 \
+  --settings '{"fileUris":["https://raw.githubusercontent.com/MicrosoftDocs/mslearn-welcome-to-azure/master/configure-nginx.sh"]}' \
+  --protected-settings '{"commandToExecute": "./configure-nginx.sh"}'
+```
+
+This command uses the Custom Script Extension to run a Bash script on your VM. The script is stored on GitHub.
+
+```
+#!/bin/bash
+
+# Update apt cache.
+sudo apt-get update
+
+# Install Nginx.
+sudo apt-get install -y nginx
+
+# Set the home page.
+echo "<html><body><h2>Welcome to Azure! My name is $(hostname).</h2></body></html>" | sudo tee -a /var/www/html/index.html
+```
+
+To summarize, the script:
+
+- Runs apt-get update to download the latest package information from the internet. This step helps ensure that the next command can locate the latest version of the Nginx package.
+- Installs Nginx.
+- Sets the home page, /var/www/html/index.html, to print a welcome message that includes your VM's host name.
+
+3. Verify the VM:
+
+```
+az vm list
+```
+
+4. Get VM's IP address and store the result as a Bash variable:
+
+```
+IPADDRESS="$(az vm list-ip-addresses --resource-group "learn-013646d8-6b6d-4f70-bb31-0393cfd8ffa2" --name my-vm --query "[].virtualMachine.network.publicIpAddresses[*].ipAddress" --output tsv)"
+```
+
+5. Run the following to print your VM's IP address to the console
+
+```
+echo $IPADDRESS
+```
+
+6. Run the following `az network nsg list` command to list the network security groups that are associated with your VM. Every VM on Azure is associated with at least one network security group.
+
+```
+az network nsg list \
+  --resource-group "learn-013646d8-6b6d-4f70-bb31-0393cfd8ffa2" \
+  --query '[].name' \
+  --output tsv
+```
+
+7. Run the following `az network nsg rule list` command to list the rules associated with the NSG named `my-vmNSG`. You see a large block of text in JSON format in the output.
+
+```
+az network nsg rule list \
+  --resource-group "learn-013646d8-6b6d-4f70-bb31-0393cfd8ffa2" \
+  --nsg-name my-vmNSG
+```
+
+Run the `az network nsg rule list` command a second time. This time, use the `--query` argument to retrieve only the name, priority, affected ports, and access (Allow or Deny) for each rule. The `--output` argument formats the output as a table so that it's easy to read.
+
+8. Run the following `az network nsg rule create` command to create a rule called `allow-http` that allows inbound access on port 80:
+
+```
+az network nsg rule create \
+  --resource-group "learn-013646d8-6b6d-4f70-bb31-0393cfd8ffa2" \
+  --nsg-name my-vmNSG \
+  --name allow-http \
+  --protocol tcp \
+  --priority 100 \
+  --destination-port-range 80 \
+  --access Allow
+```
