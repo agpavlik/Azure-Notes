@@ -15,7 +15,16 @@
   - [Virtual networking](#56)
   - [Virtual private networks](#57)
   - [Azure ExpressRoute](#58)
+  - [DNS](#59)
+- [Azure storage services](#6)
+  - [](#61)
+  - [](#62)
+  - [](#63)
+  - [](#64)
+  - [](#65)
+  - [](#66)
 - [Examples](#100)
+- [Additional resources](#101)
 
 ### 📒 Cloud computing. Cloud Models <a name="1"></a>
 
@@ -432,9 +441,101 @@ If you’re configuring a VPN to keep your information safe, you also want to be
 
 ### 📒 Azure ExpressRoute <a name="58"></a>
 
-`Azure ExpressRoute` lets you extend your on-premises networks into the Microsoft cloud over a private connection, with the help of a connectivity provider. This connection is called an ExpressRoute Circuit. With ExpressRoute, you can establish connections to Microsoft cloud services, such as Microsoft Azure and Microsoft 365. This allows you to connect offices, datacenters, or other facilities to the Microsoft cloud. Each location would have its own ExpressRoute circuit.
+`Azure ExpressRoute` lets you extend your on-premises networks into the Microsoft cloud over a private connection, with the help of a connectivity provider. This connection is called an `ExpressRoute Circuit`. With ExpressRoute, you can establish connections to Microsoft cloud services, such as Microsoft Azure and Microsoft 365. This allows you to connect offices, datacenters, or other facilities to the Microsoft cloud. Each location would have its own ExpressRoute circuit.
 
-Connectivity can be from an any-to-any (IP VPN) network, a point-to-point Ethernet network, or a virtual cross-connection through a connectivity provider at a colocation facility. ExpressRoute connections don't go over the public Internet. This allows ExpressRoute connections to offer more reliability, faster speeds, consistent latencies, and higher security than typical connections over the Internet.
+Connectivity can be from an `any-to-any (IP VPN) network`, a `point-to-point Ethernet network`, or a `virtual cross-connection` through a connectivity provider at a colocation facility. ExpressRoute connections don't go over the public Internet. This allows ExpressRoute connections to offer more reliability, faster speeds, consistent latencies, and higher security than typical connections over the Internet.
+
+There are several benefits to using ExpressRoute as the connection service between Azure and on-premises networks.
+
+- Connectivity to Microsoft cloud services across all regions in the geopolitical region.
+- Global connectivity to Microsoft services across all regions with the ExpressRoute Global Reach.
+- Dynamic routing between your network and Microsoft via Border Gateway Protocol (BGP).
+- Built-in redundancy in every peering location for higher reliability.
+
+<b>Connectivity to Microsoft cloud services</b>
+
+ExpressRoute enables direct access to the following services in all regions:
+
+- Microsoft Office 365
+- Microsoft Dynamics 365
+- Azure compute services, such as Azure Virtual Machines
+- Azure cloud services, such as Azure Cosmos DB and Azure Storage
+
+<b>Global connectivity</b>
+
+You can enable ExpressRoute Global Reach to exchange data across your on-premises sites by connecting your ExpressRoute circuits. For example, say you had an office in Asia and a datacenter in Europe, both with ExpressRoute circuits connecting them to the Microsoft network. You could use ExpressRoute Global Reach to connect those two facilities, allowing them to communicate without transferring data over the public internet.
+
+<b>Dynamic routing</b>
+
+ExpressRoute uses the BGP. `BGP` is used to exchange routes between on-premises networks and resources running in Azure. This protocol enables dynamic routing between your on-premises network and services running in the Microsoft cloud.
+
+<b>Built-in redundancy</b>
+
+Each connectivity provider uses redundant devices to ensure that connections established with Microsoft are highly available. You can configure multiple circuits to complement this feature.
+
+ExpressRoute supports four models that you can use to connect your on-premises network to the Microsoft cloud:
+
+- CloudExchange colocation
+- Point-to-point Ethernet connection
+- Any-to-any connection
+- Directly from ExpressRoute sites
+
+<b>Co-location at a cloud exchange</b>
+
+Co-location refers to your datacenter, office, or other facility being physically co-located at a cloud exchange, such as an ISP. If your facility is co-located at a cloud exchange, you can request a virtual cross-connect to the Microsoft cloud.
+
+<b>Point-to-point Ethernet connection</b>
+
+Point-to-point ethernet connection refers to using a point-to-point connection to connect your facility to the Microsoft cloud.
+
+<b>Any-to-any networks</b>
+
+With any-to-any connectivity, you can integrate your wide area network (WAN) with Azure by providing connections to your offices and datacenters. Azure integrates with your WAN connection to provide a connection like you would have between your datacenter and any branch offices.
+
+<b>Directly from ExpressRoute sites</b>
+You can connect directly into the Microsoft's global network at a peering location strategically distributed across the world. ExpressRoute Direct provides dual 100 Gbps or 10-Gbps connectivity, which supports Active/Active connectivity at scale.
+
+With ExpressRoute, your data doesn't travel over the public internet, so it's not exposed to the potential risks associated with internet communications. ExpressRoute is a private connection from your on-premises infrastructure to your Azure infrastructure. Even if you have an ExpressRoute connection, DNS queries, certificate revocation list checking, and Azure Content Delivery Network requests are still sent over the public internet.
+
+### 📒 DNS <a name="59"></a>
+
+`Azure DNS` is a hosting service for DNS domains that provides name resolution by using Microsoft Azure infrastructure. By hosting your domains in Azure, you can manage your DNS records using the same credentials, APIs, tools, and billing as your other Azure services.
+
+Azure DNS leverages the scope and scale of Microsoft Azure to provide numerous benefits, including:
+
+- Reliability and performance
+- Security
+- Ease of Use
+- Customizable virtual networks
+- Alias records
+
+<b>Reliability and performance</b>
+
+DNS domains in Azure DNS are hosted on Azure's global network of DNS name servers, providing resiliency and high availability. Azure DNS uses anycast networking, so each DNS query is answered by the closest available DNS server to provide fast performance and high availability for your domain.
+
+<b>Security</b>
+
+Azure DNS is based on Azure Resource Manager, which provides features such as:
+
+- Azure role-based access control (Azure RBAC) to control who has access to specific actions for your organization.
+- Activity logs to monitor how a user in your organization modified a resource or to find an error when troubleshooting.
+- locking to lock a subscription, resource group, or resource. Locking prevents other users in your organization from accidentally deleting or modifying critical resources.
+
+<b>Ease of use</b>
+
+Azure DNS can manage DNS records for your Azure services and provide DNS for your external resources as well. Azure DNS is integrated in the Azure portal and uses the same credentials, support contract, and billing as your other Azure services.
+
+Because Azure DNS is running on Azure, it means you can manage your domains and records with the Azure portal, Azure PowerShell cmdlets, and the cross-platform Azure CLI. Applications that require automated DNS management can integrate with the service by using the REST API and SDKs.
+
+<b>Customizable virtual networks with private domains</b>
+
+Azure DNS also supports private DNS domains. This feature allows you to use your own custom domain names in your private virtual networks, rather than being stuck with the Azure-provided names.
+
+<b>Alias records</b>
+
+Azure DNS also supports alias record sets. You can use an alias record set to refer to an Azure resource, such as an Azure public IP address, an Azure Traffic Manager profile, or an Azure Content Delivery Network (CDN) endpoint. If the IP address of the underlying resource changes, the alias record set seamlessly updates itself during DNS resolution. The alias record set points to the service instance, and the service instance is associated with an IP address.
+
+You can't use Azure DNS to buy a domain name. For an annual fee, you can buy a domain name by using App Service domains or a third-party domain name registrar. Once purchased, your domains can be hosted in Azure DNS for record management.
 
 ### 📒 Examples <a name="100"></a>
 
@@ -533,3 +634,13 @@ az network nsg rule create \
   --destination-port-range 80 \
   --access Allow
 ```
+
+### 📒 Additional resources <a name="101"></a>
+
+Host a web application with Azure App Service is a Microsoft Learn module that explores the process of hosting a web application in Azure.
+
+https://learn.microsoft.com/en-us/training/modules/host-a-web-app-with-azure-app-service/
+
+Introduction to Azure network foundation services
+
+https://learn.microsoft.com/en-us/training/paths/intro-to-azure-network-foundation-services/
