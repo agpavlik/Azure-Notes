@@ -1,4 +1,4 @@
-# Azure
+# Azure Fundamentals
 
 - [Cloud computing. Shared Responsibility. Cloud Models](#1)
 - [Benefits of using cloud services](#2)
@@ -23,14 +23,14 @@
   - [Data migration options](#64)
   - [File movement options](#65)
 - [Azure identity, access, and security](#7)
-  - []
-  - []
-  - []
-  - []
-  - []
-  - []
-  - []
-  - []
+  - [Directory services](#71)
+  - [Authentication methods](#72)
+  - [External identities](#73)
+  - [Conditional access](#74)
+  - [Role-based access control](#75)
+  - [Zero trust model](#76)
+  - [Defense-in-depth](#77)
+  - [Microsoft Defender for Cloud](#78)
 - [Examples](#100)
 - [Additional resources](#101)
 
@@ -754,6 +754,24 @@ With Azure File Sync, you can:
 - Have as many caches as you need across the world.
 - Replace a failed local server by installing Azure File Sync on a new server in the same datacenter.
 - Configure cloud tiering so the most frequently accessed files are replicated locally, while infrequently accessed files are kept in the cloud until requested.
+
+### 📒 Azure identity, access, and security <a name="7"></a>
+
+### 📒 Directory services <a name="71"></a>
+
+### 📒 Authentication methods <a name="72"></a>
+
+### 📒 External identities <a name="73"></a>
+
+### 📒 Conditional access <a name="74"></a>
+
+### 📒 Role-based access control <a name="75"></a>
+
+### 📒 Zero trust model <a name="76"></a>
+
+### 📒 Defense-in-depth <a name="77"></a>
+
+### 📒 Microsoft Defender for Cloud <a name="78"></a>
 
 ### 📒 Examples <a name="100"></a>
 
