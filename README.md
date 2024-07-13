@@ -32,12 +32,21 @@
   - [Defense-in-depth](#77)
   - [Microsoft Defender for Cloud](#78)
 - [Azure management and governance](#8)
-
   - [Cost management in Azure](#81)
   - [Pricing and Total Cost of Ownership calculators](#82)
   - [Microsoft Cost Management tool](#83)
-  - [](#84)
-  - [](#85)
+  - [Microsoft Purview](#84)
+  - [Azure Policy](#85)
+  - [Resource locks](#86)
+  - [Service Trust portal](#87)
+- [Tools for managing and deploying Azure resources](#9)
+
+  - [Tools for interacting with Azure](#91)
+  - [Azure Arc](#92)
+  - [Azure Resource Manager and Azure ARM templates](#93)
+  - [Azure Advisor](#94)
+  - [Azure Service Health](#95)
+  - [Azure Monitor](#96)
 
 - [Examples](#100)
 - [Additional resources](#101)
@@ -1232,6 +1241,227 @@ One way to organize related resources is to place them in their own subscription
 You can add, modify, or delete resource tags through Windows PowerShell, the Azure CLI, Azure Resource Manager templates, the REST API, or the Azure portal.
 
 You can use Azure Policy to enforce tagging rules and conventions. For example, you can require that certain tags be added to new resources as they're provisioned. You can also define rules that reapply tags that have been removed. Resources don't inherit tags from subscriptions and resource groups, meaning that you can apply tags at one level and not have those tags automatically show up at a different level, allowing you to create custom tagging schemas that change depending on the level (resource, resource group, subscription, and so on).
+
+### 📒 Microsoft Purview <a name="84"></a>
+
+`Microsoft Purview` is a family of data governance, risk, and compliance solutions that helps you get a single, unified view into your data. Microsoft Purview brings insights about your on-premises, multicloud, and software-as-a-service data together.
+
+With Microsoft Purview, you can stay up-to-date on your data landscape thanks to:
+
+- Automated data discovery
+- Sensitive data classification
+- End-to-end data lineage
+
+Two main solution areas comprise Microsoft Purview: risk and compliance and unified data governance.
+
+<b>Microsoft Purview risk and compliance solutions</b>
+
+Microsoft 365 features as a core component of the Microsoft Purview risk and compliance solutions. Microsoft Teams, OneDrive, and Exchange are just some of the Microsoft 365 services that Microsoft Purview uses to help manage and monitor your data. Microsoft Purview, by managing and monitoring your data, is able to help your organization:
+
+- Protect sensitive data across clouds, apps, and devices.
+- Identify data risks and manage regulatory compliance requirements.
+- Get started with regulatory compliance.
+
+<b>Unified data governance</b>
+
+Microsoft Purview has robust, unified data governance solutions that help manage your on-premises, multicloud, and software as a service data. Microsoft Purview’s robust data governance capabilities enable you to manage your data stored in Azure, SQL and Hive databases, locally, and even in other clouds like Amazon S3.
+
+Microsoft Purview’s unified data governance helps your organization:
+
+- Create an up-to-date map of your entire data estate that includes data classification and end-to-end lineage.
+- Identify where sensitive data is stored in your estate.
+- Create a secure environment for data consumers to find valuable data.
+- Generate insights about how your data is stored and used.
+- Manage access to the data in your estate securely and at scale.
+
+### 📒 Azure Policy <a name="85"></a>
+
+`Azure Policy` is a service in Azure that enables you to create, assign, and manage policies that control or audit your resources. These policies enforce different rules across your resource configurations so that those configurations stay compliant with corporate standards.
+
+Azure Policy enables you to define both individual policies and groups of related policies, known as initiatives. Azure Policy evaluates your resources and highlights resources that aren't compliant with the policies you've created. Azure Policy can also prevent noncompliant resources from being created.
+
+Azure Policies can be set at each level, enabling you to set policies on a specific resource, resource group, subscription, and so on. Additionally, Azure Policies are inherited, so if you set a policy at a high level, it will automatically be applied to all of the groupings that fall within the parent. For example, if you set an Azure Policy on a resource group, all resources created within that resource group will automatically receive the same policy.
+
+Azure Policy comes with built-in policy and initiative definitions for Storage, Networking, Compute, Security Center, and Monitoring. For example, if you define a policy that allows only a certain size for the virtual machines (VMs) to be used in your environment, that policy is invoked when you create a new VM and whenever you resize existing VMs. Azure Policy also evaluates and monitors all current VMs in your environment, including VMs that were created before the policy was created.
+
+In some cases, Azure Policy can automatically remediate noncompliant resources and configurations to ensure the integrity of the state of the resources. For example, if all resources in a certain resource group should be tagged with AppName tag and a value of "SpecialOrders," Azure Policy will automatically apply that tag if it is missing. However, you still retain full control of your environment. If you have a specific resource that you don’t want Azure Policy to automatically fix, you can flag that resource as an exception – and the policy won’t automatically fix that resource.
+
+Azure Policy also integrates with Azure DevOps by applying any continuous integration and delivery pipeline policies that pertain to the pre-deployment and post-deployment phases of your applications.
+
+An Azure Policy initiative is a way of grouping related policies together. The initiative definition contains all of the policy definitions to help track your compliance state for a larger goal.
+
+For example, Azure Policy includes an initiative named Enable Monitoring in Azure Security Center. Its goal is to monitor all available security recommendations for all Azure resource types in Azure Security Center.
+
+Under this initiative, the following policy definitions are included:
+
+- Monitor unencrypted SQL Database in Security Center This policy monitors for unencrypted SQL databases and servers.
+- Monitor OS vulnerabilities in Security Center This policy monitors servers that don't satisfy the configured OS vulnerability baseline.
+- Monitor missing Endpoint Protection in Security Center This policy monitors for servers that don't have an installed endpoint protection agent.
+
+In fact, the Enable Monitoring in Azure Security Center initiative contains over 100 separate policy definitions.
+
+### 📒 Resource locks <a name="86"></a>
+
+A `resource lock` prevents resources from being accidentally deleted or changed.
+
+Even with Azure role-based access control (Azure RBAC) policies in place, there's still a risk that people with the right level of access could delete critical cloud resources. Resource locks prevent resources from being deleted or updated, depending on the type of lock. Resource locks can be applied to individual resources, resource groups, or even an entire subscription. Resource locks are inherited, meaning that if you place a resource lock on a resource group, all of the resources within the resource group will also have the resource lock applied.
+
+There are two types of resource locks, one that prevents users from deleting and one that prevents users from changing or deleting a resource.
+
+- Delete means authorized users can still read and modify a resource, but they can't delete the resource.
+- ReadOnly means authorized users can read a resource, but they can't delete or update the resource. Applying this lock is similar to restricting all authorized users to the permissions granted by the Reader role.
+
+You can manage resource locks from the Azure portal, PowerShell, the Azure CLI, or from an Azure Resource Manager template. To view, add, or delete locks in the Azure portal, go to the Settings section of any resource's Settings pane in the Azure portal.
+
+Although locking helps prevent accidental changes, you can still make changes by following a two-step process.
+
+To modify a locked resource, you must first remove the lock. After you remove the lock, you can apply any action you have permissions to perform. Resource locks apply regardless of RBAC permissions. Even if you're an owner of the resource, you must still remove the lock before you can perform the blocked activity.
+
+### 📒 Service Trust portal <a name="87"></a>
+
+The `Microsoft Service Trust Portal` is a portal that provides access to various content, tools, and other resources about Microsoft security, privacy, and compliance practices.
+
+The Service Trust Portal contains details about Microsoft's implementation of controls and processes that protect our cloud services and the customer data therein. To access some of the resources on the Service Trust Portal, you must sign in as an authenticated user with your Microsoft cloud services account (Microsoft Entra organization account). You'll need to review and accept the Microsoft non-disclosure agreement for compliance materials.
+
+You can access the Service Trust Portal at https://servicetrust.microsoft.com/
+
+The Service Trust Portal features and content are accessible from the main menu. The categories on the main menu are:
+
+- Service Trust Portal provides a quick access hyperlink to return to the Service Trust Portal home page.
+- My Library lets you save (or pin) documents to quickly access them on your My Library page. You can also set up to receive notifications when documents in your My Library are updated.
+- All Documents is a single landing place for documents on the service trust portal. From All Documents, you can pin documents to have them show up in your My Library.
+
+Service Trust Portal reports and documents are available to download for at least 12 months after publishing or until a new version of document becomes available.
+
+### 📒 Tools for interacting with Azure<a name="91"></a>
+
+To get the most out of Azure, you need a way to interact with the Azure environment, the management groups, subscriptions, resource groups, resources, and so on. Azure provides multiple tools for managing your environment, including the:
+
+- Azure portal
+- Azure PowerShell
+- Azure Command Line Interface (CLI)
+
+The `Azure portal` is a web-based, unified console that provides an alternative to command-line tools. With the Azure portal, you can manage your Azure subscription by using a graphical user interface. You can:
+
+- Build, manage, and monitor everything from simple web apps to complex cloud deployments
+- Create custom dashboards for an organized view of resources
+- Configure accessibility options for an optimal experience
+
+The Azure portal is designed for resiliency and continuous availability. It maintains a presence in every Azure datacenter. This configuration makes the Azure portal resilient to individual datacenter failures and avoids network slowdowns by being close to users. The Azure portal updates continuously and requires no downtime for maintenance activities.
+
+`Azure Cloud Shell` is a browser-based shell tool that allows you to create, configure, and manage Azure resources using a shell. Azure Cloud Shell support both Azure PowerShell and the Azure Command Line Interface (CLI), which is a Bash shell.
+
+Azure Cloud Shell has several features that make it a unique offering to support you in managing Azure. Some of those features are:
+
+- It is a browser-based shell experience, with no local installation or configuration required.
+- It is authenticated to your Azure credentials, so when you log in it inherently knows who you are and what permissions you have.
+
+You choose the shell you’re most familiar with; Azure Cloud Shell supports both Azure PowerShell and the Azure CLI (which uses Bash).
+
+`Azure PowerShell` is a shell with which developers, DevOps, and IT professionals can run commands called command-lets (cmdlets). These commands call the Azure REST API to perform management tasks in Azure. Cmdlets can be run independently to handle one-off changes, or they may be combined to help orchestrate complex actions such as:
+
+The routine setup, teardown, and maintenance of a single resource or multiple connected resources.
+The deployment of an entire infrastructure, which might contain dozens or hundreds of resources, from imperative code.
+Capturing the commands in a script makes the process repeatable and automatable.
+
+In addition to be available via Azure Cloud Shell, you can install and configure Azure PowerShell on Windows, Linux, and Mac platforms.
+
+The `Azure CLI` is functionally equivalent to Azure PowerShell, with the primary difference being the syntax of commands. While Azure PowerShell uses PowerShell commands, the Azure CLI uses Bash commands.
+
+The Azure CLI provides the same benefits of handling discrete tasks or orchestrating complex operations through code. It’s also installable on Windows, Linux, and Mac platforms, as well as through Azure Cloud Shell.
+
+Due to the similarities in capabilities and access between Azure PowerShell and the Bash based Azure CLI, it mainly comes down to which language you’re most familiar with.
+
+### 📒 Azure Arc<a name="92"></a>
+
+Managing hybrid and multi-cloud environments can rapidly get complicated. Azure provides a host of tools to provision, configure, and monitor Azure resources. What about the on-premises resources in a hybrid configuration or the cloud resources in a multi-cloud configuration?
+
+In utilizing `Azure Resource Manager` (ARM), Arc lets you extend your Azure compliance and monitoring to your hybrid and multi-cloud configurations. Azure Arc simplifies governance and management by delivering a consistent multi-cloud and on-premises management platform.
+
+Azure Arc provides a centralized, unified way to:
+
+- Manage your entire environment together by projecting your existing non-Azure resources into ARM.
+- Manage multi-cloud and hybrid virtual machines, Kubernetes clusters, and databases as if they are running in Azure.
+- Use familiar Azure services and management capabilities, regardless of where they live.
+- Continue using traditional ITOps while introducing DevOps practices to support new cloud and native patterns in your environment.
+- Configure custom locations as an abstraction layer on top of Azure Arc-enabled Kubernetes clusters and cluster extensions.
+
+Currently, Azure Arc allows you to manage the following resource types hosted outside of Azure:
+
+- Servers
+- Kubernetes clusters
+- Azure data services
+- SQL Server
+- Virtual machines (preview)
+
+### 📒 Azure Resource Manager and Azure ARM templates<a name="93"></a>
+
+`Azure Resource Manager` (ARM) is the deployment and management service for Azure. It provides a management layer that enables you to create, update, and delete resources in your Azure account. Anytime you do anything with your Azure resources, ARM is involved.
+
+When a user sends a request from any of the Azure tools, APIs, or SDKs, ARM receives the request. ARM authenticates and authorizes the request. Then, ARM sends the request to the Azure service, which takes the requested action. You see consistent results and capabilities in all the different tools because all requests are handled through the same API.
+
+With Azure Resource Manager, you can:
+
+- Manage your infrastructure through declarative templates rather than scripts. A Resource Manager template is a JSON file that defines what you want to deploy to Azure.
+- Deploy, manage, and monitor all the resources for your solution as a group, rather than handling these resources individually.
+- Re-deploy your solution throughout the development life-cycle and have confidence your resources are deployed in a consistent state.
+- Define the dependencies between resources, so they're deployed in the correct order.
+- Apply access control to all services because RBAC is natively integrated into the management platform.
+- Apply tags to resources to logically organize all the resources in your subscription.
+- Clarify your organization's billing by viewing costs for a group of resources that share the same tag.
+
+`Infrastructure as code` is a concept where you manage your infrastructure as lines of code. At an introductory level, it's things like using Azure Cloud Shell, Azure PowerShell, or the Azure CLI to manage and configure your resources. As you get more comfortable in the cloud, you can use the infrastructure as code concept to manage entire deployments using repeatable templates and configurations. ARM templates and Bicep are two examples of using infrastructure as code with the Azure Resource Manager to maintain your environment.
+
+By using `ARM templates`, you can describe the resources you want to use in a declarative JSON format. With an ARM template, the deployment code is verified before any code is run. This ensures that the resources will be created and connected correctly. The template then orchestrates the creation of those resources in parallel. That is, if you need 50 instances of the same resource, all 50 instances are created at the same time.
+Ultimately, the developer, DevOps professional, or IT professional needs only to define the desired state and configuration of each resource in the ARM template, and the template does the rest. Templates can even execute PowerShell and Bash scripts before or after the resource has been set up.
+ARM templates provide many benefits when planning for deploying Azure resources. Some of those benefits include:
+
+- Declarative syntax: ARM templates allow you to create and deploy an entire Azure infrastructure declaratively. Declarative syntax means you declare what you want to deploy but don’t need to write the actual programming commands and sequence to deploy the resources.
+- Repeatable results: Repeatedly deploy your infrastructure throughout the development lifecycle and have confidence your resources are deployed in a consistent manner. You can use the same ARM template to deploy multiple dev/test environments, knowing that all the environments are the same.
+- Orchestration: You don't have to worry about the complexities of ordering operations. Azure Resource Manager orchestrates the deployment of interdependent resources, so they're created in the correct order. When possible, Azure Resource Manager deploys resources in parallel, so your deployments finish faster than serial deployments. You deploy the template through one command, rather than through multiple imperative commands.
+- Modular files: You can break your templates into smaller, reusable components and link them together at deployment time. You can also nest one template inside another template. For example, you could create a template for a VM stack, and then nest that template inside of templates that deploy entire environments, and that VM stack will consistently be deployed in each of the environment templates.
+- Extensibility: With deployment scripts, you can add PowerShell or Bash scripts to your templates. The deployment scripts extend your ability to set up resources during deployment. A script can be included in the template or stored in an external source and referenced in the template. Deployment scripts give you the ability to complete your end-to-end environment setup in a single ARM template.
+
+`Bicep` is a language that uses declarative syntax to deploy Azure resources. A Bicep file defines the infrastructure and configuration. Then, ARM deploys that environment based on your Bicep file. While similar to an ARM template, which is written in JSON, Bicep files tend to use a simpler, more concise style.
+
+Some benefits of Bicep are:
+
+- Support for all resource types and API versions: Bicep immediately supports all preview and GA versions for Azure services. As soon as a resource provider introduces new resource types and API versions, you can use them in your Bicep file. You don't have to wait for tools to be updated before using the new services.
+- Simple syntax: When compared to the equivalent JSON template, Bicep files are more concise and easier to read. Bicep requires no previous knowledge of programming languages. Bicep syntax is declarative and specifies which resources and resource properties you want to deploy.
+- Repeatable results: Repeatedly deploy your infrastructure throughout the development lifecycle and have confidence your resources are deployed in a consistent manner. Bicep files are idempotent, which means you can deploy the same file many times and get the same resource types in the same state. You can develop one file that represents the desired state, rather than developing lots of separate files to represent updates.
+- Orchestration: You don't have to worry about the complexities of ordering operations. Resource Manager orchestrates the deployment of interdependent resources so they're created in the correct order. When possible, Resource Manager deploys resources in parallel so your deployments finish faster than serial deployments. You deploy the file through one command, rather than through multiple imperative commands.
+- Modularity: You can break your Bicep code into manageable parts by using modules. The module deploys a set of related resources. Modules enable you to reuse code and simplify development. Add the module to a Bicep file anytime you need to deploy those resources.
+
+### 📒 Azure Advisor<a name="94"></a>
+
+`Azure Advisor` evaluates your Azure resources and makes recommendations to help improve reliability, security, and performance, achieve operational excellence, and reduce costs. Azure Advisor is designed to help you save time on cloud optimization. The recommendation service includes suggested actions you can take right away, postpone, or dismiss.
+
+The recommendations are available via the Azure portal and the API, and you can set up notifications to alert you to new recommendations.
+
+When you're in the Azure portal, the Advisor dashboard displays personalized recommendations for all your subscriptions. You can use filters to select recommendations for specific subscriptions, resource groups, or services.
+
+The recommendations are divided into five categories:
+
+- Reliability is used to ensure and improve the continuity of your business-critical applications.
+- Security is used to detect threats and vulnerabilities that might lead to security breaches.
+- Performance is used to improve the speed of your applications.
+- Operational Excellence is used to help you achieve process and workflow efficiency, resource manageability, and deployment best practices.
+- Cost is used to optimize and reduce your overall Azure spending.
+
+### 📒 Azure Service Health<a name="95"></a>
+
+Microsoft Azure provides a global cloud solution to help you manage your infrastructure needs, reach your customers, innovate, and adapt rapidly. Knowing the status of the global Azure infrastructure and your individual resources may seem like a daunting task. Azure Service Health helps you keep track of Azure resource, both your specifically deployed resources and the overall status of Azure. Azure service health does this by combining three different Azure services:
+
+- Azure Status is a broad picture of the status of Azure globally. Azure status informs you of service outages in Azure on the Azure Status page. The page is a global view of the health of all Azure services across all Azure regions. It’s a good reference for incidents with widespread impact.
+- Service Health provides a narrower view of Azure services and regions. It focuses on the Azure services and regions you're using. This is the best place to look for service impacting communications about outages, planned maintenance activities, and other health advisories because the authenticated Service Health experience knows which services and resources you currently use. You can even set up Service Health alerts to notify you when service issues, planned maintenance, or other changes may affect the Azure services and regions you use.
+- Resource Health is a tailored view of your actual Azure resources. It provides information about the health of your individual cloud resources, such as a specific virtual machine instance. Using Azure Monitor, you can also configure alerts to notify you of availability changes to your cloud resources.
+
+By using Azure status, Service health, and Resource Health, Azure Service Health gives you a complete view of your Azure environment-all the way from the global status of Azure services and regions down to specific resources. Additionally, historical alerts are stored and accessible for later review. Something you initially thought was a simple anomaly that turned into a trend, can readily be reviewed and investigated thanks to the historical alerts.
+Finally, in the event that a workload you’re running is impacted by an event, Azure Service Health provides links to support.
+
+### 📒 Azure Monitor<a name="96"></a>
+
+`Azure Monitor` is a platform for collecting data on your resources, analyzing that data, visualizing the information, and even acting on the results. Azure Monitor can monitor Azure resources, your on-premises resources, and even multi-cloud resources like virtual machines hosted with a different cloud provider.
 
 ### 📒 Examples <a name="100"></a>
 
